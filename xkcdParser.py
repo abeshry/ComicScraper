@@ -23,7 +23,6 @@ class Downloader():
 		if isImage:
 			#must check if there are symbols in name
 			imageFile = open("xkcd Comics/" +imageName + ".png", "wb")
-			print(imageName)
 			imageFile.write(self.contents)
 			imageFile.close()
 
@@ -35,6 +34,7 @@ class xkcdParser(Downloader):
 		self.title = ""
 		self.caption = ""
 		self.status = ""
+		self.imgurl = ""
 
 	def getLatest(self):
 		try:
@@ -62,15 +62,15 @@ class xkcdParser(Downloader):
 	def getAll(self):
 		self.download(self.url)
 		self.getLatest()
-
 		if (self.latestComic != 0):
-			for x in range(1,latestComic):
+			for x in range(1,self.latestComic):
 				try:
 					self.url = "http://xkcd.com/" + str(x)
 					self.download(self.url)
 					parser.getTitle()
 					parser.getCaption()
 					parser.getImage()
+					print(self.title)
 				except:
 					print("Symbol in name" + self.url)
 
@@ -87,8 +87,8 @@ class xkcdParser(Downloader):
 	def getImage(self):
 		if (self.contents != ""):
 			tree = etree.HTML(self.contents)
-			self.url = tree.xpath("string(//div[@id='comic']/img/@src)")
-			self.url = "http://" + self.url[2:]
+			self.imgurl = tree.xpath("string(//div[@id='comic']/img/@src)")
+			self.imgurl = "http://" + self.imgurl[2:]
 			self.download(self.title, isImage = True)
 
 if __name__ == "__main__":
@@ -112,4 +112,3 @@ if __name__ == "__main__":
 	# print (parser.latestComic)
 	# print (parser.title)
 	# print (parser.caption)
-	
