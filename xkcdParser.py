@@ -6,6 +6,8 @@ import urllib.request
 import re
 import os
 import random
+import threading
+from queue import Queue
 from lxml import etree
 
 class Downloader():
@@ -22,6 +24,7 @@ class Downloader():
 
 		if isImage:
 			#must check if there are symbols in name
+			imageName = re.sub(r'[^\w]', ' ', imageName)
 			imageFile = open("xkcd Comics/" +imageName + ".png", "wb")
 			imageFile.write(self.contents)
 			imageFile.close()
@@ -35,6 +38,8 @@ class xkcdParser(Downloader):
 		self.caption = ""
 		self.status = ""
 		self.imgurl = ""
+		self.threads = []
+		self.q = Queue()
 
 	def getLatest(self):
 		try:
@@ -72,7 +77,33 @@ class xkcdParser(Downloader):
 					parser.getImage()
 					print(self.title)
 				except:
-					print("Symbol in name" + self.url)
+					print("Error in: " + self.url)
+
+
+	def multiThreadWork(self):	
+		while (self.q.qsize() > 0):
+			self.url = self.q.get()	
+			self.q.task_done()
+			self.download(self.url)
+			parser.getTitle()
+			parser.getImage()
+			
+
+	def getAllMultiThreaded(self):
+		self.getLatest()
+		for x in range(1, self.latestComic):
+			self.q.put("http://xkcd.com/" + str(x))
+
+		for y in range(0, 8):
+			thread = threading.Thread(target = self.multiThreadWork)
+			thread.daemon = True
+			self.threads.append(thread)
+		
+		for t in self.threads:
+			t.start()
+
+		for t in self.threads:
+			t.join()
 
 	def getTitle(self):
 		if (self.contents != ""):
@@ -107,9 +138,11 @@ if __name__ == "__main__":
 	#Returns a every comic from beginning to date
 	#parser.getAll()
 
+	#Returns a every comic from beginning to date with multithreading
+	#parser.getAllMultiThreaded()
+	#print("done")
 
 	#Prints the comic number, title and caption
 	# print (parser.latestComic)
 	# print (parser.title)
-		self.download(self.url)
 	# print (parser.caption)
