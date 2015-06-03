@@ -111,4 +111,5 @@ if __name__ == "__main__":
 	#Prints the comic number, title and caption
 	# print (parser.latestComic)
 	# print (parser.title)
+		self.download(self.url)
 	# print (parser.caption)
