@@ -2,7 +2,9 @@ import urllib
 import urllib.request
 import re
 import os
+import time
 from lxml import etree
+from multiprocessing import Pool
 from xkcdParser import Downloader
 from datetime import timedelta
 from datetime import date
@@ -39,7 +41,6 @@ class garfParser(Downloader):
 		while (response == True):
 			day = (recentDay - timedelta(days=counter))
 			self.url = "http://garfield.com/uploads/strips/" + str(day) + ".jpg"
-			print(self.url)
 			self.download(self.url)
 			self.getStrip(day)
 			counter = counter + 1
@@ -51,9 +52,23 @@ class garfParser(Downloader):
 			self.download(self.url)
 			self.getStrip(comicDate)
 
+	def getAllMultiProcess(self):
+		self.getToday()
+		response = True
+		recentDay = date(int(self.today[:4]),int(self.today[5:7]), int(self.today[8:10]))
+		counter = 0
+		pool = Pool(processes = 4)
+		while (response == True):
+			day = (recentDay - timedelta(days=counter))
+			self.url = "http://garfield.com/uploads/strips/" + str(day) + ".jpg"
+			self.download(self.url)
+			counter = counter + 1
+			valuesProcessed =  pool.apply_async(self.getStrip, [str(day)])
+
 if __name__ == "__main__":
 	if (not os.path.exists ("Garfield Comics")):
 		os.mkdir("Garfield Comics")
 	test = garfParser("http://garfield.com")
-	#test.getAllComics()
-	test.getComicByDate("2015-01-01")
+	test.getAllComics()
+	#test.getComicByDate("2015-01-01")
+	#test.getAllMultiProcess()
