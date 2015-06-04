@@ -8,6 +8,7 @@ from multiprocessing import Pool
 from xkcdParser import Downloader
 from datetime import timedelta
 from datetime import date
+from PIL import Image, ImageFont, ImageDraw
 
 class garfParser(Downloader):
 	def ___init__(self, url):
@@ -26,6 +27,16 @@ class garfParser(Downloader):
 			imageFile = open("Garfield Comics/" + self.url.lstrip("http://garfield.com/uploads/strips/"), "wb")
 			imageFile.write(self.contents)
 			imageFile.close()
+
+			imageFileName = ("Garfield Comics/" + str(date) + ".jpg")
+
+			img = Image.open(imageFileName)
+			(width, height) = img.size
+			draw = ImageDraw.Draw(img)
+			font = ImageFont.truetype("Quand_tu_dors_.otf", 26)
+			draw.text((5, height - 26), str(date), fill = "red", font=font)
+			img.save(imageFileName)
+
 			
 	def getLatestComic(self):
 		self.getToday()
@@ -70,5 +81,5 @@ if __name__ == "__main__":
 		os.mkdir("Garfield Comics")
 	test = garfParser("http://garfield.com")
 	test.getAllComics()
-	#test.getComicByDate("2015-01-01")
+	test.getComicByDate("2015-01-01")
 	#test.getAllMultiProcess()

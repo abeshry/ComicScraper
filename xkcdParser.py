@@ -9,6 +9,7 @@ import random
 import threading
 from queue import Queue
 from lxml import etree
+from PIL import Image, ImageFont, ImageDraw
 
 class Downloader():
 	
@@ -21,13 +22,24 @@ class Downloader():
 		response = browser.getcode()
 		if (response == 200):
 			self.contents = browser.read()
-
 		if isImage:
 			#must check if there are symbols in name
+			browser = urllib.request.urlopen(self.imgurl)
+			if (response == 200):
+				self.imgContents = browser.read()
+
 			imageName = re.sub(r'[^\w]', ' ', imageName)
 			imageFile = open("xkcd Comics/" +imageName + ".png", "wb")
-			imageFile.write(self.contents)
+			imageFileName = ("xkcd Comics/" +imageName + ".png")
+			imageFile.write(self.imgContents)
 			imageFile.close()
+
+			img = Image.open(imageFileName)
+			(width, height) = img.size
+			draw = ImageDraw.Draw(img)
+			font = ImageFont.truetype("Quand_tu_dors_.otf", 26)
+			draw.text((5, height - 26), self.title, fill = "red", font=font)
+			img.save(imageFileName)
 
 class xkcdParser(Downloader):
 
@@ -35,6 +47,7 @@ class xkcdParser(Downloader):
 		Downloader.__init__(self, url)
 		self.latestComic = None
 		self.title = ""
+		self.imgContents = ""
 		self.caption = ""
 		self.status = ""
 		self.imgurl = ""
@@ -51,18 +64,18 @@ class xkcdParser(Downloader):
 	def getCurrent(self):
 		self.download(self.url)
 		self.getLatest()
-		parser.getTitle()
-		parser.getCaption()
-		parser.getImage()
+		self.getTitle()
+		self.getCaption()
+		self.getImage()
 
 	def getRandom(self):
 		if (self.latestComic != 0):
 			comicNumber = random.randint(1, self.latestComic)
 			self.url = "http://xkcd.com/" + str(comicNumber)
 			self.download(self.url)
-			parser.getTitle()
-			parser.getCaption()
-			parser.getImage()
+			self.getTitle()
+			self.getCaption()
+			self.getImage()
 
 	def getAll(self):
 		self.download(self.url)
@@ -72,9 +85,9 @@ class xkcdParser(Downloader):
 				try:
 					self.url = "http://xkcd.com/" + str(x)
 					self.download(self.url)
-					parser.getTitle()
-					parser.getCaption()
-					parser.getImage()
+					self.getTitle()
+					self.getCaption()
+					self.getImage()
 					print(self.title)
 				except:
 					print("Error in: " + self.url)
@@ -85,8 +98,8 @@ class xkcdParser(Downloader):
 			self.url = self.q.get()	
 			self.q.task_done()
 			self.download(self.url)
-			parser.getTitle()
-			parser.getImage()
+			self.getTitle()
+			self.getImage()
 			
 
 	def getAllMultiThreaded(self):
@@ -136,7 +149,7 @@ if __name__ == "__main__":
 	#parser.getRandom()
 	
 	#Returns a every comic from beginning to date
-	#parser.getAll()
+	parser.getAll()
 
 	#Returns a every comic from beginning to date with multithreading
 	#parser.getAllMultiThreaded()
