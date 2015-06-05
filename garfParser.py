@@ -21,6 +21,7 @@ class garfParser(Downloader):
 			tree = etree.HTML(self.contents)
 			imgurl = tree.xpath("string(//*[@id='home_comic']/img/@src)")
 			self.today = imgurl.lstrip("htp:/garfield/uos/t.cm").rstrip(".jpg")
+			return self.today
 
 	def getStrip(self, date):
 		if (self.contents):
