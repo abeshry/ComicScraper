@@ -11,8 +11,8 @@ from datetime import date
 from PIL import Image, ImageFont, ImageDraw
 
 class garfParser(Downloader):
-	def ___init__(self, url):
-		self.url = url
+	def __init__(self):
+		self.url = "http://garfield.com"
 		self.today = ""
 
 	def getToday(self):
@@ -36,13 +36,15 @@ class garfParser(Downloader):
 			font = ImageFont.truetype("Quand_tu_dors_.otf", 26)
 			draw.text((5, height - 26), str(date), fill = "red", font=font)
 			img.save(imageFileName)
+			return imageFileName
 
 			
 	def getLatestComic(self):
 		self.getToday()
 		self.url = "http://garfield.com/uploads/strips/" + self.today + ".jpg"
 		self.download(self.url)
-		self.getStrip(self.today)
+		filename = self.getStrip(self.today)
+		return filename
 
 	def getAllComics(self):
 		self.getToday()
@@ -61,7 +63,9 @@ class garfParser(Downloader):
 		if (comicDate):
 			self.url = "http://garfield.com/uploads/strips/" + str(comicDate)+ ".jpg"
 			self.download(self.url)
-			self.getStrip(comicDate)
+			filename = self.getStrip(comicDate)
+			return filename
+
 
 	def getAllMultiProcess(self):
 		self.getToday()
@@ -79,7 +83,8 @@ class garfParser(Downloader):
 if __name__ == "__main__":
 	if (not os.path.exists ("Garfield Comics")):
 		os.mkdir("Garfield Comics")
-	test = garfParser("http://garfield.com")
-	test.getAllComics()
+	test = garfParser()
+	#test.getAllComics()
 	test.getComicByDate("2015-01-01")
+	#test.getLatestComic()
 	#test.getAllMultiProcess()
