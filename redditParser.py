@@ -22,13 +22,16 @@ class redditParser(Downloader):
 				while (i < 51):
 					tree = etree.HTML(self.contents)
 					redditurl = tree.xpath("string(//*[@id='siteTable']/div["+str(i)+"]/div[2]/p[1]/a)")
+					print(redditurl)
 					i = i + 2
 				pageLast = tree.xpath("string(//*[@id='siteTable']/div[49]/@class)")
-				pageLast = pageLast.lstrip("thing d").rstrip(" linkflair linkflair-album odd  link ")
-				pageLast = pageLast[1:]
+				pageLast = pageLast[10:]
+				print(pageLast)
+				pageLast = pageLast[:9]
 				print(pageLast)
 				count = count + 25
-				self.url = "http://www.reddit.com/r/all/?count="+str(count) + "&after=" + str(pageLast)	
+				self.url = "http://www.reddit.com/r/all/?count="+str(count) + "&after=" + str(pageLast)
+				print(self.url)
 
 if __name__ == "__main__":
 	if (not os.path.exists ("Reddit")):
@@ -36,7 +39,3 @@ if __name__ == "__main__":
 	test = redditParser()
 	#retreive the first 500 pages from reddit.com/r/all
 	test.getTitles()
-
-	#test.getComicByDate("2015-01-01")
-	#test.getLatestComic()
-	#test.getAllMultiProcess()
