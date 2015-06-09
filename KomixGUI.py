@@ -13,7 +13,8 @@ class KomixGUI():
 		self.bottomButtonWidth = self.windowWidth/4
 		self.bottomButtonHeight = self.windowHeight/5
 		self.topHeight = self.height*0.07
-		self.comic = ""
+		self.comic = "Garfield"
+		self.filename = garfParser().getLatestComic()
 
 	def setUpWindow(self):
 		app = QtGui.QApplication(sys.argv)  
@@ -56,9 +57,8 @@ class KomixGUI():
 
 	def setUpScript(self):
 		pic = QtGui.QLabel(self.w)
-		pic.setGeometry(0,self.topHeight,self.windowWidth, self.windowHeight - self.topHeight - self.bottomButtonHeight)
-		filename = garfParser().getLatestComic()
-		scriptArea = QtGui.QPixmap(filename)
+		pic.setGeometry(0,self.topHeight,self.windowWidth, self.windowHeight - self.topHeight - self.bottomButtonHeight) 
+		scriptArea = QtGui.QPixmap(self.filename)
 		scriptArea = scriptArea.scaledToHeight(self.windowHeight)
 		scriptArea = scriptArea.scaledToWidth(self.windowWidth)
 		pic.setPixmap(scriptArea)
@@ -66,7 +66,7 @@ class KomixGUI():
 	def setUpTop(self):
 		fontFamily = QtGui.QFontDatabase.addApplicationFont("komikax.ttf")
 		fontName = QtGui.QFontDatabase.applicationFontFamilies(fontFamily)[0]
-		font = QtGui.QFont(fontName,self.topHeight/1.5,QtGui.QFont.Bold,True)
+		font = QtGui.QFont(fontName,self.topHeight/2,QtGui.QFont.Bold,True)
 		
 		top = QtGui.QLabel(self.w)
 		top.setGeometry(0,0 ,self.windowWidth, self.topHeight)
@@ -75,7 +75,7 @@ class KomixGUI():
 		comic = QtGui.QLabel(self.w)
 		comic.setStyleSheet("background-color: #2980b9; color: white")
 		comic.setFont(font)
-		comic.setText("Comic: Garfield")
+		comic.setText("Comic: " + self.comic)
 
 		title = QtGui.QLabel(self.w)
 		title.setStyleSheet("background-color: #2980b9; color: white")
@@ -83,11 +83,6 @@ class KomixGUI():
 		title.setText(garfParser().getToday())
 		width = title.fontMetrics().boundingRect(title.text()).width()
 		title.setGeometry(self.width - width - 5, 0, width - 5, self.topHeight - 5)
-
-
-
-
-
 
 def main():
 	app = KomixGUI()
