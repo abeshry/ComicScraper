@@ -12,7 +12,10 @@ from PIL import Image, ImageFont, ImageDraw
 
 class garfParser(Downloader):
 	def __init__(self):
+		if (not os.path.exists ("Garfield Comics")):
+			os.mkdir("Garfield Comics")
 		self.url = "http://garfield.com"
+		self.comicCount = 0
 		self.today = ""
 
 	def getToday(self):
@@ -59,8 +62,10 @@ class garfParser(Downloader):
 			self.getStrip(day)
 			counter = counter + 1
 
-	def getComicByDate(self, wantedDate):
-		comicDate = date(int(wantedDate[:4]),int(wantedDate[5:7]), int(wantedDate[8:10]))
+	def getComicByDate(self, count):
+		self.getToday()
+		recentDay = date(int(self.today[:4]),int(self.today[5:7]), int(self.today[8:10]))
+		comicDate = (recentDay - timedelta(days=count))
 		if (comicDate):
 			self.url = "http://garfield.com/uploads/strips/" + str(comicDate)+ ".jpg"
 			self.download(self.url)
@@ -86,6 +91,6 @@ if __name__ == "__main__":
 		os.mkdir("Garfield Comics")
 	test = garfParser()
 	#test.getAllComics()
-	test.getComicByDate("2015-01-01")
+	#test.getComicByDate("2015-01-01")
 	#test.getLatestComic()
 	#test.getAllMultiProcess()
