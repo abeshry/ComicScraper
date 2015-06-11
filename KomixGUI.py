@@ -28,7 +28,7 @@ class KomixGUI():
 		self.w.setWindowTitle('KOMIX')
 		self.w.setStyleSheet("background-color: white")
 		self.setUpButtons()
-		self.setUpScript()
+		self.setUpScriptArea()
 		self.setUpTop()
 		self.w.show()
 
@@ -83,13 +83,15 @@ class KomixGUI():
 		#randomComicButton.clicked.connect(self.randomComic)
 
 	def setUpScript(self):
-		pic = QtGui.QLabel(self.w)
-		pic.setGeometry(0,self.topHeight,self.windowWidth, self.windowHeight - self.topHeight - self.bottomButtonHeight)
 		scriptArea = QtGui.QPixmap(self.filename)
 		scriptArea = scriptArea.scaledToHeight(self.windowHeight)
 		scriptArea = scriptArea.scaledToWidth(self.windowWidth)
-		pic.setPixmap(scriptArea)
 	
+	def setUpScriptArea(self):
+		pic = QtGui.QLabel(self.w)
+		pic.setGeometry(0,self.topHeight,self.windowWidth, self.windowHeight - self.topHeight - self.bottomButtonHeight)
+
+
 	def setUpTop(self):
 		fontFamily = QtGui.QFontDatabase.addApplicationFont("komikax.ttf")
 		fontName = QtGui.QFontDatabase.applicationFontFamilies(fontFamily)[0]
